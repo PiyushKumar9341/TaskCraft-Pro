@@ -210,7 +210,7 @@ h1 {
 
 #darkModeToggle .sun-icon {
   display: none;
-  color: #fbbf24;
+  color: #60a5fa;
 }
 
 #darkModeToggle .moon-icon {
@@ -640,32 +640,44 @@ body.dark-mode .pwa-install-btn:hover {
   justify-content: center;
   gap: 4px;
   background-color: var(--bg-card-subtle);
-  padding: 4px;
+  padding: 5px;
   border-radius: 9999px;
   border: 1px solid var(--border-card);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.03);
 }
 
 .filter-btn {
   background-color: transparent;
   color: var(--text-secondary);
-  padding: 7px 14px;
-  border: none;
+  padding: 8px 16px;
+  border: 1px solid transparent;
   border-radius: 9999px;
   cursor: pointer;
   font-size: 0.84em;
-  font-weight: 600;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  font-weight: 700;
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
   flex: 1;
+  user-select: none;
+  outline: none;
 }
 
 .filter-btn:hover {
   color: var(--text-primary);
+  background-color: rgba(255, 255, 255, 0.4);
+}
+
+.filter-btn:active {
+  transform: scale(0.96);
 }
 
 .filter-btn.active {
-  background: linear-gradient(135deg, #ffffff, #f8fafc);
+  background: rgba(255, 255, 255, 0.95);
   color: var(--primary-accent);
-  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.15);
+  border-color: rgba(99, 102, 241, 0.25);
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.18), 0 1px 3px rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transform: scale(1.02);
 }
 
 #clearAllBtn {
@@ -690,7 +702,7 @@ body.dark-mode .pwa-install-btn:hover {
 }
 
 /* =========================================================
-   TASK LIST ITEMS (SUBTLE MINIMAL DESIGN)
+   TASK LIST ITEMS (SUBTLE MINIMAL DESIGN & SMOOTH CROSSFADE)
    ========================================================= */
 
 #taskList {
@@ -701,6 +713,12 @@ body.dark-mode .pwa-install-btn:hover {
   flex-direction: column;
   gap: 10px;
   text-align: left;
+  transition: opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1), transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#taskList.switching {
+  opacity: 0.35;
+  transform: translateY(2px);
 }
 
 #taskList li {
@@ -716,8 +734,8 @@ body.dark-mode .pwa-install-btn:hover {
 }
 
 #taskList li:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.04);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(99, 102, 241, 0.08);
   border-color: rgba(99, 102, 241, 0.25);
 }
 
@@ -792,13 +810,13 @@ body.dark-mode #taskList li.completed {
 
 #taskList li.completed .complete-btn {
   background-color: transparent;
-  color: #f59e0b;
-  border-color: rgba(245, 158, 11, 0.18);
+  color: #10b981;
+  border-color: rgba(16, 185, 129, 0.25);
 }
 
 #taskList li.completed .complete-btn:hover {
-  background-color: rgba(245, 158, 11, 0.12);
-  color: #f59e0b;
+  background-color: rgba(16, 185, 129, 0.12);
+  color: #10b981;
 }
 
 /* =========================================================
@@ -1362,7 +1380,7 @@ body.dark-mode {
 }
 
 body.dark-mode h1 {
-  background: linear-gradient(135deg, #60a5fa 0%, #a7f3d0 100%);
+  background: linear-gradient(135deg, #60a5fa 0%, #818cf8 50%, #c084fc 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -1543,10 +1561,19 @@ body.dark-mode #taskList li.completed {
   border-color: rgba(255, 255, 255, 0.04);
 }
 
+body.dark-mode .filter-btn:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: #f3f4f6;
+}
+
 body.dark-mode .filter-btn.active {
-  background: #181a20;
+  background: rgba(30, 34, 48, 0.95);
   color: #60a5fa;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+  border-color: rgba(96, 165, 250, 0.3);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 12px rgba(96, 165, 250, 0.2);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transform: scale(1.02);
 }
 
 body.dark-mode footer {
@@ -1648,3 +1675,5 @@ body.dark-mode .contact-info {
     font-size: 0.82em;
   }
 }
+
+

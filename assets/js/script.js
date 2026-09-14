@@ -391,54 +391,70 @@ function renderTasks() {
 
   filtered.sort((a, b) => getPriorityWeight(b.priority) - getPriorityWeight(a.priority));
 
-  filtered.forEach(task => {
-    const li = document.createElement('li');
-    if (task.completed) li.classList.add('completed');
+  if (filtered.length === 0) {
+    const emptyLi = document.createElement('li');
+    emptyLi.className = 'empty-state-item';
+    emptyLi.style.justifyContent = 'center';
+    emptyLi.style.color = 'var(--text-muted)';
+    emptyLi.style.fontSize = '0.9em';
+    emptyLi.style.fontStyle = 'italic';
+    emptyLi.style.padding = '18px';
+    emptyLi.textContent = currentFilter === 'completed'
+      ? 'No completed tasks yet ✨'
+      : currentFilter === 'active'
+      ? 'No active tasks! You are all caught up 🎉'
+      : 'No tasks found 📝 Add one above!';
+    taskList.appendChild(emptyLi);
+  } else {
+    filtered.forEach(task => {
+      const li = document.createElement('li');
+      if (task.completed) li.classList.add('completed');
 
-    const taskTitle = document.createElement('span');
-    taskTitle.className = 'task-title-text';
-    taskTitle.textContent = task.text;
+      const taskTitle = document.createElement('span');
+      taskTitle.className = 'task-title-text';
+      taskTitle.textContent = task.text;
 
-    const actionGroup = document.createElement('div');
-    actionGroup.className = 'task-action-group';
+      const actionGroup = document.createElement('div');
+      actionGroup.className = 'task-action-group';
 
-    const p = task.priority || 'medium';
-    const badge = document.createElement('span');
-    badge.className = `priority-badge ${p}`;
-    badge.textContent = p === 'high' ? '🔴 High' : p === 'medium' ? '🟡 Med' : '🔵 Low';
+      const p = task.priority || 'medium';
+      const badge = document.createElement('span');
+      badge.className = `priority-badge ${p}`;
+      badge.textContent = p === 'high' ? '🔴 High' : p === 'medium' ? '🟡 Med' : '🔵 Low';
 
-    const completeBtn = document.createElement('button');
-    completeBtn.textContent = task.completed ? 'Undo' : 'Complete';
-    completeBtn.className = 'complete-btn';
-    completeBtn.addEventListener('click', async () => {
-      if (!currentUser) {
-        showMessage('Sign in with Google to manage tasks.', 'error');
-        return;
-      }
-      const newState = !task.completed;
-      await updateTaskCompletion(currentUser.uid, task.id, newState);
+      const completeBtn = document.createElement('button');
+      completeBtn.textContent = task.completed ? 'Undo' : 'Complete';
+      completeBtn.className = 'complete-btn';
+      completeBtn.addEventListener('click', async () => {
+        if (!currentUser) {
+          showMessage('Sign in with Google to manage tasks.', 'error');
+          return;
+        }
+        const newState = !task.completed;
+        await updateTaskCompletion(currentUser.uid, task.id, newState);
+      });
+
+      const deleteBtn = document.createElement('button');
+      deleteBtn.textContent = 'Delete';
+      deleteBtn.className = 'delete-btn';
+      deleteBtn.addEventListener('click', async () => {
+        if (!currentUser) {
+          showMessage('Sign in to delete tasks.', 'error');
+          return;
+        }
+        await deleteTask(currentUser.uid, task.id);
+      });
+
+      actionGroup.appendChild(badge);
+      actionGroup.appendChild(completeBtn);
+      actionGroup.appendChild(deleteBtn);
+
+      li.appendChild(taskTitle);
+      li.appendChild(actionGroup);
+
+      taskList.appendChild(li);
     });
-
-    const deleteBtn = document.createElement('button');
-    deleteBtn.textContent = 'Delete';
-    deleteBtn.className = 'delete-btn';
-    deleteBtn.addEventListener('click', async () => {
-      if (!currentUser) {
-        showMessage('Sign in to delete tasks.', 'error');
-        return;
-      }
-      await deleteTask(currentUser.uid, task.id);
-    });
-
-    actionGroup.appendChild(badge);
-    actionGroup.appendChild(completeBtn);
-    actionGroup.appendChild(deleteBtn);
-
-    li.appendChild(taskTitle);
-    li.appendChild(actionGroup);
-
-    taskList.appendChild(li);
-  });
+  }
 
   if (statsBar) {
     const total = tasks.length;
@@ -453,10 +469,23 @@ function renderTasks() {
 // ---------------------------------------------------------
 filterButtons.forEach(btn => {
   btn.addEventListener('click', () => {
+    if (btn.classList.contains('active')) return;
+
     filterButtons.forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     currentFilter = btn.dataset.filter || 'all';
-    renderTasks();
+
+    if (taskList) {
+      taskList.classList.add('switching');
+      setTimeout(() => {
+        renderTasks();
+        requestAnimationFrame(() => {
+          taskList.classList.remove('switching');
+        });
+      }, 80);
+    } else {
+      renderTasks();
+    }
   });
 });
 
@@ -913,3 +942,5 @@ if ('serviceWorker' in navigator) {
       .catch(err => console.warn('PWA Service Worker registration failed:', err));
   });
 }
+
+
