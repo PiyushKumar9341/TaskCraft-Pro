@@ -270,7 +270,7 @@ body.dark-mode #darkModeToggle .moon-icon {
 .input-group {
   display: flex;
   gap: 10px;
-  margin: 24px 0 14px;
+  margin: 24px 0 0;
 }
 
 #taskInput {
@@ -567,10 +567,9 @@ body.dark-mode #darkModeToggle .moon-icon {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
   width: 100%;
-  margin-top: 26px;
-  margin-bottom: 24px;
+  margin: 24px 0;
 }
 
 .filter {
