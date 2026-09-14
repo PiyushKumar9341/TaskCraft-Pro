@@ -180,13 +180,60 @@ h1 {
    DARK MODE TOGGLE & AUTH BUTTONS
    ========================================================= */
 
-/* Circular Theme Toggle Button (Top Right Placement) */
-#darkModeToggle {
+/* Top Right Controls Wrapper & Buttons */
+.top-controls-wrapper {
   position: absolute;
   top: 26px;
   right: 26px;
-  width: 44px;
-  height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 10;
+}
+
+#logoutBtn.top-logout-btn {
+  background: rgba(239, 68, 68, 0.08);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  padding: 8px 14px;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.1);
+}
+
+#logoutBtn.top-logout-btn:hover {
+  background: rgba(239, 68, 68, 0.16);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.35);
+}
+
+body.dark-mode #logoutBtn.top-logout-btn {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+body.dark-mode #logoutBtn.top-logout-btn:hover {
+  background: rgba(239, 68, 68, 0.25);
+  color: #fca5a5;
+}
+
+/* Circular Theme Toggle Button (Top Right Placement) */
+#darkModeToggle {
+  position: relative;
+  top: auto;
+  right: auto;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(10px);

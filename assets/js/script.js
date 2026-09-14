@@ -836,7 +836,7 @@ auth.onAuthStateChanged(async (user) => {
 
   if (user) {
     if (googleLoginBtn) googleLoginBtn.style.display = 'none';
-    if (logoutBtn)      logoutBtn.style.display = 'inline-block';
+    if (logoutBtn)      logoutBtn.style.display = 'inline-flex';
 
     // Preserve custom popup name if set, otherwise fallback to Google name
     const savedName = getLocalName() || user.displayName || 'Friend';
