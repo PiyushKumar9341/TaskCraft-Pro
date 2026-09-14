@@ -226,6 +226,46 @@ body.dark-mode #darkModeToggle .moon-icon {
   display: none;
 }
 
+/* In-App PWA Install Button */
+.pwa-install-btn {
+  position: absolute;
+  top: 26px;
+  left: 26px;
+  background: linear-gradient(135deg, rgba(79, 70, 229, 0.12), rgba(59, 130, 246, 0.12));
+  color: #4f46e5;
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  padding: 8px 16px;
+  border-radius: 9999px;
+  font-size: 0.82em;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.1);
+  z-index: 10;
+}
+
+.pwa-install-btn:hover {
+  transform: translateY(-2px) scale(1.04);
+  background: linear-gradient(135deg, #4f46e5, #3b82f6);
+  color: #ffffff;
+  border-color: transparent;
+  box-shadow: 0 6px 18px rgba(79, 70, 229, 0.35);
+}
+
+body.dark-mode .pwa-install-btn {
+  background: rgba(59, 130, 246, 0.15);
+  color: #93c5fd;
+  border-color: rgba(96, 165, 250, 0.3);
+}
+
+body.dark-mode .pwa-install-btn:hover {
+  background: linear-gradient(135deg, #3b82f6, #60a5fa);
+  color: #070709;
+}
+
 .auth-buttons {
   display: flex;
   justify-content: center;

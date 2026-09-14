@@ -879,8 +879,33 @@ if (toggleFeaturesBtn && featuresContent) {
 }
 
 // ---------------------------------------------------------
-// 19. Progressive Web App (PWA) Service Worker Registration
+// 19. Progressive Web App (PWA) & In-App Installation Flow
 // ---------------------------------------------------------
+let deferredPrompt;
+const pwaInstallBtn = document.getElementById('pwaInstallBtn');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  if (pwaInstallBtn) {
+    pwaInstallBtn.style.display = 'inline-flex';
+  }
+});
+
+if (pwaInstallBtn) {
+  pwaInstallBtn.addEventListener('click', async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        pwaInstallBtn.style.display = 'none';
+        showMessage('TaskCraft Pro installed successfully! 🎉');
+      }
+      deferredPrompt = null;
+    }
+  });
+}
+
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./sw.js')
