@@ -704,9 +704,28 @@ if (copyEmailBtnFooter && emailAddressFooter) {
 }
 
 // ---------------------------------------------------------
-// 16. Google Authentication Flow
+// 16. Google Authentication Flow (Speed Suite Optimization)
 // ---------------------------------------------------------
 const provider = new firebase.auth.GoogleAuthProvider();
+
+function setGoogleLoginBtnLoading(isLoading) {
+  if (!googleLoginBtn) return;
+  if (isLoading) {
+    googleLoginBtn.classList.add('loading');
+    googleLoginBtn.innerHTML = `
+      <span class="auth-spinner"></span>
+      <span>Connecting to Google...</span>
+    `;
+  } else {
+    googleLoginBtn.classList.remove('loading');
+    googleLoginBtn.innerHTML = `
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12.24 10.285V13.4h6.887C18.2 15.684 15.65 18 12.24 18c-3.315 0-6-2.685-6-6s2.685-6 6-6c1.55 0 2.92.585 3.96 1.545l2.4-2.4C16.89 3.51 14.7 2.685 12.24 2.685 7.14 2.685 3 6.825 3 11.925s4.14 9.24 9.24 9.24c5.34 0 8.865-3.75 8.865-9.015 0-.645-.06-1.245-.165-1.865h-8.7z"/>
+      </svg>
+      Sign in with Google
+    `;
+  }
+}
 
 if (googleLoginBtn) {
   googleLoginBtn.addEventListener('click', async () => {
@@ -716,12 +735,15 @@ if (googleLoginBtn) {
       return;
     }
 
+    setGoogleLoginBtnLoading(true);
+
     try {
       const result = await auth.signInWithPopup(provider);
       if (result && result.user) {
         const userName = result.user.displayName || result.user.email.split('@')[0];
         saveLocalName(userName);
         updateGreeting(userName);
+        localStorage.setItem('userSessionActive', 'true');
         showMessage(`Welcome, ${userName}! Signed in with Google.`);
       }
     } catch (err) {
@@ -737,6 +759,8 @@ if (googleLoginBtn) {
       } else {
         showMessage(`Sign-in failed: ${err.message}`, 'error');
       }
+    } finally {
+      setGoogleLoginBtnLoading(false);
     }
   });
 }
@@ -749,6 +773,7 @@ if (logoutBtn) {
       tasks = [];
       renderTasks();
       clearLocalName();
+      localStorage.removeItem('userSessionActive');
       updateGreeting('');
 
       if (googleLoginBtn) googleLoginBtn.style.display = 'inline-flex';
@@ -763,7 +788,7 @@ if (logoutBtn) {
 }
 
 // ---------------------------------------------------------
-// 17. Auth Observer & App Launch Initialization
+// 17. Auth Observer & App Launch Initialization (Zero-Flicker)
 // ---------------------------------------------------------
 auth.onAuthStateChanged(async (user) => {
   currentUser = user;
@@ -775,6 +800,7 @@ auth.onAuthStateChanged(async (user) => {
     const savedName = getLocalName() || user.displayName || 'Friend';
     saveLocalName(savedName);
     updateGreeting(savedName);
+    localStorage.setItem('userSessionActive', 'true');
 
     await loadTasksForUser(user.uid);
   } else {
@@ -791,7 +817,40 @@ auth.onAuthStateChanged(async (user) => {
       updateGreeting('');
     }
   }
+
+  setGoogleLoginBtnLoading(false);
 });
+
+// Google One-Tap 1-Click Fast Authentication Initialization
+function tryGoogleOneTap() {
+  if (window.google && google.accounts && google.accounts.id) {
+    try {
+      google.accounts.id.initialize({
+        client_id: "685947792786-e49cf23e4a977c4c0be54b.apps.googleusercontent.com",
+        callback: async (res) => {
+          if (res && res.credential) {
+            setGoogleLoginBtnLoading(true);
+            const cred = firebase.auth.GoogleAuthProvider.credential(res.credential);
+            const userCred = await auth.signInWithCredential(cred);
+            if (userCred && userCred.user) {
+              const userName = userCred.user.displayName || userCred.user.email.split('@')[0];
+              saveLocalName(userName);
+              updateGreeting(userName);
+              localStorage.setItem('userSessionActive', 'true');
+              showMessage(`Welcome, ${userName}! Signed in instantly with 1-Tap.`);
+            }
+            setGoogleLoginBtnLoading(false);
+          }
+        }
+      });
+      if (!currentUser && !localStorage.getItem('userSessionActive')) {
+        google.accounts.id.prompt();
+      }
+    } catch (e) {
+      console.warn('Google One-Tap notice:', e);
+    }
+  }
+}
 
 window.addEventListener('load', () => {
   const savedName = getLocalName();
@@ -802,6 +861,7 @@ window.addEventListener('load', () => {
     openWelcomeModal();
   }
   renderTasks();
+  setTimeout(tryGoogleOneTap, 1000);
 });
 
 // ---------------------------------------------------------

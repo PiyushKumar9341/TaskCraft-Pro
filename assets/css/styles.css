@@ -263,6 +263,28 @@ body.dark-mode #darkModeToggle .moon-icon {
   transform: translateY(0);
 }
 
+/* Instant Login Button Spinner Indicator */
+#googleLoginBtn.loading {
+  opacity: 0.88;
+  cursor: wait;
+  pointer-events: none;
+  background: linear-gradient(135deg, #4338ca, #1d4ed8);
+}
+
+.auth-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: authSpin 0.65s linear infinite;
+  display: inline-block;
+}
+
+@keyframes authSpin {
+  to { transform: rotate(360deg); }
+}
+
 /* =========================================================
    TASK INPUT & CONTROLS
    ========================================================= */
