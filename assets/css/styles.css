@@ -532,34 +532,34 @@ body.dark-mode #darkModeToggle .moon-icon {
 
 /* Priority Badges */
 .priority-badge {
-  font-size: 0.72em;
-  font-weight: 700;
-  padding: 3px 9px;
+  font-size: 0.7em;
+  font-weight: 600;
+  padding: 2px 8px;
   border-radius: 9999px;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  margin-left: 10px;
+  letter-spacing: 0.02em;
   display: inline-flex;
   align-items: center;
   gap: 4px;
+  margin-right: 4px;
+  flex-shrink: 0;
 }
 
 .priority-badge.high {
   background: rgba(239, 68, 68, 0.08);
   color: #ef4444;
-  border: 1px solid rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.16);
 }
 
 .priority-badge.medium {
   background: rgba(245, 158, 11, 0.08);
-  color: #f59e0b;
-  border: 1px solid rgba(245, 158, 11, 0.15);
+  color: #d97706;
+  border: 1px solid rgba(245, 158, 11, 0.16);
 }
 
 .priority-badge.low {
   background: rgba(59, 130, 246, 0.08);
-  color: #3b82f6;
-  border: 1px solid rgba(59, 130, 246, 0.15);
+  color: #2563eb;
+  border: 1px solid rgba(59, 130, 246, 0.16);
 }
 
 /* Filters Navigation Tabs & Top Control Bar */
@@ -658,8 +658,9 @@ body.dark-mode #darkModeToggle .moon-icon {
   border-color: rgba(99, 102, 241, 0.25);
 }
 
-#taskList li span {
-  flex-grow: 1;
+#taskList li .task-title-text {
+  flex: 1;
+  min-width: 0;
   word-break: break-word;
   margin-right: 14px;
   font-size: 0.94em;
@@ -667,9 +668,9 @@ body.dark-mode #darkModeToggle .moon-icon {
   color: var(--text-primary);
 }
 
-#taskList li .flex.space-x-2 {
+#taskList li .task-action-group {
   display: flex;
-  gap: 6px;
+  gap: 8px;
   align-items: center;
   flex-shrink: 0;
 }

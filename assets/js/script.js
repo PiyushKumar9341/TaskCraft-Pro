@@ -395,17 +395,17 @@ function renderTasks() {
     const li = document.createElement('li');
     if (task.completed) li.classList.add('completed');
 
-    const span = document.createElement('span');
-    span.textContent = task.text;
+    const taskTitle = document.createElement('span');
+    taskTitle.className = 'task-title-text';
+    taskTitle.textContent = task.text;
+
+    const actionGroup = document.createElement('div');
+    actionGroup.className = 'task-action-group';
 
     const p = task.priority || 'medium';
     const badge = document.createElement('span');
     badge.className = `priority-badge ${p}`;
     badge.textContent = p === 'high' ? '🔴 High' : p === 'medium' ? '🟡 Med' : '🔵 Low';
-    span.appendChild(badge);
-
-    const btnWrapper = document.createElement('div');
-    btnWrapper.className = 'flex space-x-2';
 
     const completeBtn = document.createElement('button');
     completeBtn.textContent = task.completed ? 'Undo' : 'Complete';
@@ -430,11 +430,12 @@ function renderTasks() {
       await deleteTask(currentUser.uid, task.id);
     });
 
-    btnWrapper.appendChild(completeBtn);
-    btnWrapper.appendChild(deleteBtn);
+    actionGroup.appendChild(badge);
+    actionGroup.appendChild(completeBtn);
+    actionGroup.appendChild(deleteBtn);
 
-    li.appendChild(span);
-    li.appendChild(btnWrapper);
+    li.appendChild(taskTitle);
+    li.appendChild(actionGroup);
 
     taskList.appendChild(li);
   });
