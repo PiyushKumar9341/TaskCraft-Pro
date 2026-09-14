@@ -1,7 +1,8 @@
-// =========================
-// Firebase Setup (compat)
-// =========================
+/* =========================================================
+   TASKCRAFT PRO | SMART PRODUCTIVITY SUITE - APP LOGIC
+   ========================================================= */
 
+// 1. Firebase Configuration & Initialization
 const firebaseConfig = {
   apiKey: "AIzaSyDJfJ1NkJOmmsYSb7RLJPFeZR_8-tqoUgQ",
   authDomain: "advanced-todo-b93ba.firebaseapp.com",
@@ -16,50 +17,38 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db   = firebase.firestore();
 
-// =========================
-// DOM Elements
-// =========================
-
+// 2. DOM Element Selectors
 const taskInput            = document.getElementById('taskInput');
 const addTaskBtn           = document.getElementById('addTaskBtn');
 const taskList             = document.getElementById('taskList');
 const filterButtons        = document.querySelectorAll('.filter-btn');
 const clearAllBtn          = document.getElementById('clearAllBtn');
-
 const darkModeToggle       = document.getElementById('darkModeToggle');
 const scrollToTopBtn       = document.getElementById('scrollToTopBtn');
-
 const quoteElement         = document.getElementById('quote');
 const messageBox           = document.getElementById('messageBox');
-
 const googleLoginBtn       = document.getElementById('googleLoginBtn');
 const logoutBtn            = document.getElementById('logoutBtn');
-
 const personalizedGreeting = document.getElementById('personalizedGreeting');
 const userNameSpan         = document.getElementById('userName');
-
 const welcomeOverlay       = document.getElementById('welcomeOverlay');
 const welcomeModal         = document.getElementById('welcomeModal');
 const userNameInput        = document.getElementById('userNameInput');
 const submitNameBtn        = document.getElementById('submitNameBtn');
-
 const emailAddressFooter   = document.getElementById('emailAddressFooter');
 const copyEmailBtnFooter   = document.getElementById('copyEmailBtnFooter');
-
 const statsBar             = document.getElementById('statsBar');
 
-// =========================
-// State
-// =========================
-
+// ---------------------------------------------------------
+// 3. Application State
+// ---------------------------------------------------------
 let currentFilter = 'all';
-let currentUser   = null;   // firebase user
+let currentUser   = null;
 let tasks         = [];
 
-// =========================
-// Helper – toast messages
-// =========================
-
+// ---------------------------------------------------------
+// 4. Toast Notification Manager
+// ---------------------------------------------------------
 function showMessage(text, type = 'info') {
   if (!messageBox) return;
   messageBox.textContent = text;
@@ -85,10 +74,9 @@ function showMessage(text, type = 'info') {
   }, 2000);
 }
 
-// =========================
-// Name handling + greeting
-// =========================
-
+// ---------------------------------------------------------
+// 5. User Name & Greeting Management
+// ---------------------------------------------------------
 function saveLocalName(name) {
   if (!name) return;
   localStorage.setItem('userName', name);
@@ -102,49 +90,53 @@ function clearLocalName() {
   localStorage.removeItem('userName');
 }
 
-// AI message for popup heading
 function getPopupAiMessage(name) {
-  const now  = new Date();
-  const hour = now.getHours();
+  const hour = new Date().getHours();
+  let advice = 'Let’s start with one solid win.';
 
-  let line = 'Let’s start with one tiny task.';
   if (hour >= 5 && hour < 12) {
-    line = 'Perfect time to set the tone for your morning.';
+    advice = 'Ready to conquer your day?';
   } else if (hour >= 12 && hour < 17) {
-    line = 'Afternoon boost: pick one task and move it forward.';
+    advice = 'Pick a task and keep your momentum going.';
   } else if (hour >= 17 && hour < 22) {
-    line = 'Evening focus: wrap the day with one solid win.';
+    advice = 'Wrap up your day with one solid win.';
   } else {
-    line = 'Late hours, but a small step now will make tomorrow easier.';
+    advice = 'A small step tonight makes tomorrow easier.';
   }
 
-  const cleanName = name && name.trim() ? name.trim() : 'there';
-  return `${cleanName}, ${line}`;
+  const cleanName = name && name.trim() ? name.trim() : '';
+  return cleanName ? `${cleanName}, ${advice}` : `Wrap up your day with one solid win.`;
 }
 
-// Card greeting: sirf "Hello.. name🚀"
+function updateModalHeading() {
+  const heading = document.getElementById('welcomeModalHeading');
+  if (!heading) return;
+  const currentName = userNameInput ? userNameInput.value.trim() : '';
+  heading.textContent = getPopupAiMessage(currentName);
+}
+
 function updateGreeting(name) {
-  const greetingEl = document.getElementById('personalizedGreeting');
-  const nameEl     = document.getElementById('userName');
-  if (!greetingEl || !nameEl) return;
+  if (!personalizedGreeting || !userNameSpan) return;
 
   if (name && name.trim() !== '') {
-    // HTML me jo text hai usko mat chhedo, sirf name set karo
-    nameEl.textContent = name;
-    greetingEl.style.display = 'block';
+    userNameSpan.textContent = name;
+    personalizedGreeting.style.display = 'block';
   } else {
-    nameEl.textContent = '';
-    greetingEl.style.display = 'none';
+    userNameSpan.textContent = '';
+    personalizedGreeting.style.display = 'none';
   }
 }
 
-
-// =========================
-// AI Welcome modal
-// =========================
-
+// ---------------------------------------------------------
+// 6. AI Welcome Modal Handlers
+// ---------------------------------------------------------
 function openWelcomeModal() {
   if (!welcomeOverlay) return;
+  const savedName = getLocalName();
+  if (userNameInput && savedName) {
+    userNameInput.value = savedName;
+  }
+  updateModalHeading();
   welcomeOverlay.style.display = 'flex';
   requestAnimationFrame(() => {
     welcomeOverlay.classList.add('show');
@@ -159,46 +151,42 @@ function closeWelcomeModal() {
   }, 300);
 }
 
-// "Let's Go" + AI message on heading
 if (submitNameBtn) {
   submitNameBtn.addEventListener('click', () => {
-    const name = userNameInput.value.trim();
+    const name = userNameInput ? userNameInput.value.trim() : '';
     if (!name) {
       showMessage('Please enter your name.', 'error');
       return;
     }
 
-    // Naam store + outer greeting update
     saveLocalName(name);
     updateGreeting(name);
+    updateModalHeading();
 
-    // Popup heading ko AI-style message banao
-    const heading = welcomeModal
-      ? welcomeModal.querySelector('h2')
-      : null;
+    submitNameBtn.textContent = 'Nice, let’s go! 🚀';
 
-    if (heading) {
-      heading.textContent = getPopupAiMessage(name);
-    }
-
-    submitNameBtn.textContent = 'Nice, let’s go!';
-
-    // 3s ke baad close + reset
     setTimeout(() => {
       closeWelcomeModal();
-
-      if (heading) {
-        heading.textContent = 'What should I call you?';
-      }
-      submitNameBtn.textContent = "Let's Go";
-    }, 3000);
+      setTimeout(() => {
+        submitNameBtn.textContent = "Nice, let’s go!";
+      }, 400);
+    }, 400);
   });
 }
 
-// =========================
-// Firestore helpers (per user)
-// =========================
+if (userNameInput) {
+  userNameInput.addEventListener('input', updateModalHeading);
+  userNameInput.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      if (submitNameBtn) submitNameBtn.click();
+    }
+  });
+}
 
+// ---------------------------------------------------------
+// 7. Firestore Synchronization Helpers
+// ---------------------------------------------------------
 function getTasksCollectionRef(uid) {
   return db.collection('users').doc(uid).collection('tasks');
 }
@@ -218,7 +206,7 @@ async function loadTasksForUser(uid) {
     renderTasks();
   } catch (err) {
     console.error('Error loading tasks:', err);
-    showMessage('Could not load tasks (check Firestore rules).', 'error');
+    showMessage('Could not load tasks.', 'error');
     tasks = [];
     renderTasks();
   }
@@ -264,10 +252,9 @@ async function clearAllTasks(uid) {
   renderTasks();
 }
 
-// =========================
-// Render tasks + stats
-// =========================
-
+// ---------------------------------------------------------
+// 8. Render Task List & Stats Bar
+// ---------------------------------------------------------
 function renderTasks() {
   if (!taskList) return;
   taskList.innerHTML = '';
@@ -294,7 +281,7 @@ function renderTasks() {
     completeBtn.className = 'complete-btn';
     completeBtn.addEventListener('click', async () => {
       if (!currentUser) {
-        showMessage('Sign in to manage tasks.', 'error');
+        showMessage('Sign in with Google to manage tasks.', 'error');
         return;
       }
       const newState = !task.completed;
@@ -329,10 +316,9 @@ function renderTasks() {
   }
 }
 
-// =========================
-// Filters
-// =========================
-
+// ---------------------------------------------------------
+// 9. Filter Buttons Setup
+// ---------------------------------------------------------
 filterButtons.forEach(btn => {
   btn.addEventListener('click', () => {
     filterButtons.forEach(b => b.classList.remove('active'));
@@ -342,44 +328,44 @@ filterButtons.forEach(btn => {
   });
 });
 
-// =========================
-// Add Task
-// =========================
+// ---------------------------------------------------------
+// 10. Add Task Handler
+// ---------------------------------------------------------
+if (addTaskBtn && taskInput) {
+  addTaskBtn.addEventListener('click', async () => {
+    const text = taskInput.value.trim();
+    if (!text) {
+      showMessage('Please enter a task.', 'error');
+      return;
+    }
+    if (!currentUser) {
+      showMessage('Sign in with Google to save tasks.', 'error');
+      return;
+    }
+    try {
+      await addTaskToUser(currentUser.uid, text);
+      taskInput.value = '';
+    } catch (err) {
+      console.error('Error adding task:', err);
+      showMessage('Could not add task.', 'error');
+    }
+  });
 
-addTaskBtn.addEventListener('click', async () => {
-  const text = taskInput.value.trim();
-  if (!text) {
-    showMessage('Please enter a task.', 'error');
-    return;
-  }
-  if (!currentUser) {
-    showMessage('Sign in with Google to save tasks.', 'error');
-    return;
-  }
-  try {
-    await addTaskToUser(currentUser.uid, text);
-    taskInput.value = '';
-  } catch (err) {
-    console.error('Error adding task:', err);
-    showMessage('Could not add task.', 'error');
-  }
-});
+  taskInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') addTaskBtn.click();
+  });
+}
 
-taskInput.addEventListener('keydown', e => {
-  if (e.key === 'Enter') addTaskBtn.click();
-});
-
-// =========================
-// Clear All
-// =========================
-
+// ---------------------------------------------------------
+// 11. Clear All Button
+// ---------------------------------------------------------
 if (clearAllBtn) {
   clearAllBtn.addEventListener('click', async () => {
     if (!currentUser) {
       showMessage('Sign in to clear tasks.', 'error');
       return;
     }
-    if (!confirm('Delete all tasks?')) return;
+    if (!confirm('Are you sure you want to delete all tasks?')) return;
     try {
       await clearAllTasks(currentUser.uid);
       showMessage('All tasks cleared.');
@@ -390,18 +376,15 @@ if (clearAllBtn) {
   });
 }
 
-// =========================
-// Dark Mode
-// =========================
-
+// ---------------------------------------------------------
+// 12. Dark Mode Theme Engine
+// ---------------------------------------------------------
 function applySavedTheme() {
   const saved = localStorage.getItem('theme');
   if (saved === 'dark') {
     document.body.classList.add('dark-mode');
-    if (darkModeToggle) darkModeToggle.textContent = 'Light Mode';
   } else {
     document.body.classList.remove('dark-mode');
-    if (darkModeToggle) darkModeToggle.textContent = 'Dark Mode';
   }
 }
 applySavedTheme();
@@ -411,14 +394,12 @@ if (darkModeToggle) {
     document.body.classList.toggle('dark-mode');
     const isDark = document.body.classList.contains('dark-mode');
     localStorage.setItem('theme', isDark ? 'dark' : 'light');
-    darkModeToggle.textContent = isDark ? 'Light Mode' : 'Dark Mode';
   });
 }
 
-// =========================
-// Scroll to top
-// =========================
-
+// ---------------------------------------------------------
+// 13. Scroll To Top Button
+// ---------------------------------------------------------
 window.addEventListener('scroll', () => {
   if (!scrollToTopBtn) return;
   const show = document.documentElement.scrollTop > 200;
@@ -431,10 +412,9 @@ if (scrollToTopBtn) {
   });
 }
 
-// =========================
-// Motivational Quote
-// =========================
-
+// ---------------------------------------------------------
+// 14. Motivational Quotes Engine
+// ---------------------------------------------------------
 const quotes = [
   "Small steps every day lead to big results.",
   "Done is better than perfect.",
@@ -461,40 +441,64 @@ const quotes = [
 function showRandomQuote() {
   if (!quoteElement) return;
   const idx = Math.floor(Math.random() * quotes.length);
-  quoteElement.textContent = quotes[idx];
+  quoteElement.textContent = `“${quotes[idx]}”`;
 }
 showRandomQuote();
 
-// =========================
-// Copy email footer
-// =========================
-
+// ---------------------------------------------------------
+// 15. Footer Email Copy
+// ---------------------------------------------------------
 if (copyEmailBtnFooter && emailAddressFooter) {
   copyEmailBtnFooter.addEventListener('click', async () => {
     const email = emailAddressFooter.textContent.trim();
     try {
       await navigator.clipboard.writeText(email);
+      const originalText = copyEmailBtnFooter.textContent;
+      copyEmailBtnFooter.textContent = 'Copied! ✓';
       showMessage('Email copied to clipboard.');
+      setTimeout(() => {
+        copyEmailBtnFooter.textContent = originalText;
+      }, 2000);
     } catch {
       showMessage('Could not copy email.', 'error');
     }
   });
 }
 
-// =========================
-// Google Auth (sirf sync)
-// =========================
-
+// ---------------------------------------------------------
+// 16. Google Authentication Flow
+// ---------------------------------------------------------
 const provider = new firebase.auth.GoogleAuthProvider();
 
 if (googleLoginBtn) {
   googleLoginBtn.addEventListener('click', async () => {
+    if (window.location.protocol === 'file:') {
+      showMessage('Google Sign-In requires a web server (http://localhost or Live Server).', 'error');
+      console.warn('Firebase Auth does not support file:// protocol. Please serve using Live Server or host online.');
+      return;
+    }
+
     try {
       const result = await auth.signInWithPopup(provider);
-      console.log('Signed in as:', result.user && result.user.email);
+      if (result && result.user) {
+        const userName = result.user.displayName || result.user.email.split('@')[0];
+        saveLocalName(userName);
+        updateGreeting(userName);
+        showMessage(`Welcome, ${userName}! Signed in with Google.`);
+      }
     } catch (err) {
       console.error('Google sign-in error:', err.code, err.message);
-      showMessage('Google sign-in failed.', 'error');
+      if (err.code === 'auth/operation-not-supported-in-this-environment') {
+        showMessage('Google Sign-In requires a web server (http://localhost or Live Server).', 'error');
+      } else if (err.code === 'auth/unauthorized-domain') {
+        showMessage('This domain is not authorized in Firebase Console.', 'error');
+      } else if (err.code === 'auth/popup-blocked') {
+        showMessage('Sign-in popup was blocked by browser. Please allow popups.', 'error');
+      } else if (err.code === 'auth/popup-closed-by-user') {
+        showMessage('Sign-in popup was closed.', 'info');
+      } else {
+        showMessage(`Sign-in failed: ${err.message}`, 'error');
+      }
     }
   });
 }
@@ -503,15 +507,13 @@ if (logoutBtn) {
   logoutBtn.addEventListener('click', async () => {
     try {
       await auth.signOut();
-
       currentUser = null;
       tasks = [];
       renderTasks();
-
       clearLocalName();
       updateGreeting('');
 
-      if (googleLoginBtn) googleLoginBtn.style.display = 'inline-block';
+      if (googleLoginBtn) googleLoginBtn.style.display = 'inline-flex';
       if (logoutBtn)      logoutBtn.style.display = 'none';
 
       showMessage('You are signed out.');
@@ -522,23 +524,9 @@ if (logoutBtn) {
   });
 }
 
-// Enter press on name input should trigger "Let's Go"
-if (userNameInput) {
-  userNameInput.addEventListener('keydown', (event) => {
-    if (event.key === 'Enter') {
-      event.preventDefault();          // default submit ya refresh mat hone do
-      if (submitNameBtn) {
-        submitNameBtn.click();         // same flow as manual click
-      }
-    }
-  });
-}
-
-
-// =========================
-// Auth State Observer
-// =========================
-
+// ---------------------------------------------------------
+// 17. Auth Observer & App Launch Initialization
+// ---------------------------------------------------------
 auth.onAuthStateChanged(async (user) => {
   currentUser = user;
 
@@ -546,30 +534,21 @@ auth.onAuthStateChanged(async (user) => {
     if (googleLoginBtn) googleLoginBtn.style.display = 'none';
     if (logoutBtn)      logoutBtn.style.display = 'inline-block';
 
-    const savedName = getLocalName();
-    if (savedName) {
-      updateGreeting(savedName);
-    } else {
-      updateGreeting('');
-      openWelcomeModal();   // logged-in but no name yet
-    }
+    const savedName = getLocalName() || user.displayName || 'Friend';
+    saveLocalName(savedName);
+    updateGreeting(savedName);
 
     await loadTasksForUser(user.uid);
   } else {
-    if (googleLoginBtn) googleLoginBtn.style.display = 'inline-block';
+    if (googleLoginBtn) googleLoginBtn.style.display = 'inline-flex';
     if (logoutBtn)      logoutBtn.style.display = 'none';
 
     tasks = [];
     renderTasks();
-
     clearLocalName();
     updateGreeting('');
   }
 });
-
-// =========================
-// Initial UI
-// =========================
 
 window.addEventListener('load', () => {
   const savedName = getLocalName();
@@ -577,7 +556,21 @@ window.addEventListener('load', () => {
     updateGreeting(savedName);
   } else {
     updateGreeting('');
-    openWelcomeModal();   // first visit / no name → AI welcome
+    openWelcomeModal();
   }
   renderTasks();
 });
+
+// ---------------------------------------------------------
+// 18. Smart Features Collapsible Drawer Toggle
+// ---------------------------------------------------------
+const toggleFeaturesBtn = document.getElementById('toggleFeaturesBtn');
+const featuresContent    = document.getElementById('featuresContent');
+
+if (toggleFeaturesBtn && featuresContent) {
+  toggleFeaturesBtn.addEventListener('click', () => {
+    const isExpanded = toggleFeaturesBtn.classList.toggle('expanded');
+    featuresContent.classList.toggle('open');
+    toggleFeaturesBtn.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
+  });
+}
