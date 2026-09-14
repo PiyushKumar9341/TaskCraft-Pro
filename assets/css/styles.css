@@ -1338,6 +1338,7 @@ body.dark-mode .footer-trademark-banner span {
    ========================================================= */
 
 body.dark-mode {
+  color-scheme: dark;
   background-color: #070709;
   background-image:
     radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.08) 0px, transparent 50%),
@@ -1410,19 +1411,34 @@ body.dark-mode .modal-input-icon {
   color: #94a3b8;
 }
 
-body.dark-mode #userNameInput:-webkit-autofill,
-body.dark-mode #userNameInput:-webkit-autofill:hover, 
-body.dark-mode #userNameInput:-webkit-autofill:focus {
-  -webkit-text-fill-color: #f8fafc !important;
-  -webkit-box-shadow: 0 0 0px 1000px #1a1d28 inset !important;
-  transition: background-color 5000s ease-in-out 0s;
-}
-
+/* Dark Mode Input & Autofill Fixes for all inputs */
+body.dark-mode input,
 body.dark-mode #taskInput,
-body.dark-mode #searchInput {
+body.dark-mode #searchInput,
+body.dark-mode #userNameInput {
   background-color: #181a20 !important;
   color: #f8fafc !important;
   border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+body.dark-mode #taskInput:focus,
+body.dark-mode #searchInput:focus,
+body.dark-mode input:focus {
+  background-color: #1e2230 !important;
+  color: #f8fafc !important;
+  border-color: #60a5fa !important;
+  box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.25) !important;
+}
+
+body.dark-mode input:-webkit-autofill,
+body.dark-mode input:-webkit-autofill:hover, 
+body.dark-mode input:-webkit-autofill:focus,
+body.dark-mode textarea:-webkit-autofill,
+body.dark-mode textarea:-webkit-autofill:hover,
+body.dark-mode textarea:-webkit-autofill:focus {
+  -webkit-text-fill-color: #f8fafc !important;
+  -webkit-box-shadow: 0 0 0px 1000px #181a20 inset !important;
+  transition: background-color 5000s ease-in-out 0s;
 }
 
 body.dark-mode .search-toggle-btn {
