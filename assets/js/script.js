@@ -174,6 +174,12 @@ function updateGreeting(name) {
   }
 }
 
+if (userNameSpan) {
+  userNameSpan.addEventListener('click', () => {
+    openWelcomeModal();
+  });
+}
+
 // ---------------------------------------------------------
 // 6. AI Welcome Modal Handlers
 // ---------------------------------------------------------
@@ -769,7 +775,8 @@ if (googleLoginBtn) {
     try {
       const result = await auth.signInWithPopup(provider);
       if (result && result.user) {
-        const userName = result.user.displayName || result.user.email.split('@')[0];
+        // Preserve custom popup name if set by user, otherwise fallback to Google name
+        const userName = getLocalName() || result.user.displayName || result.user.email.split('@')[0];
         saveLocalName(userName);
         updateGreeting(userName);
         localStorage.setItem('userSessionActive', 'true');
@@ -801,9 +808,14 @@ if (logoutBtn) {
       currentUser = null;
       tasks = [];
       renderTasks();
-      clearLocalName();
       localStorage.removeItem('userSessionActive');
-      updateGreeting('');
+      
+      const savedName = getLocalName();
+      if (savedName) {
+        updateGreeting(savedName);
+      } else {
+        updateGreeting('');
+      }
 
       if (googleLoginBtn) googleLoginBtn.style.display = 'inline-flex';
       if (logoutBtn)      logoutBtn.style.display = 'none';
@@ -826,6 +838,7 @@ auth.onAuthStateChanged(async (user) => {
     if (googleLoginBtn) googleLoginBtn.style.display = 'none';
     if (logoutBtn)      logoutBtn.style.display = 'inline-block';
 
+    // Preserve custom popup name if set, otherwise fallback to Google name
     const savedName = getLocalName() || user.displayName || 'Friend';
     saveLocalName(savedName);
     updateGreeting(savedName);
@@ -862,7 +875,8 @@ function tryGoogleOneTap() {
             const cred = firebase.auth.GoogleAuthProvider.credential(res.credential);
             const userCred = await auth.signInWithCredential(cred);
             if (userCred && userCred.user) {
-              const userName = userCred.user.displayName || userCred.user.email.split('@')[0];
+              // Preserve custom popup name if set
+              const userName = getLocalName() || userCred.user.displayName || userCred.user.email.split('@')[0];
               saveLocalName(userName);
               updateGreeting(userName);
               localStorage.setItem('userSessionActive', 'true');
