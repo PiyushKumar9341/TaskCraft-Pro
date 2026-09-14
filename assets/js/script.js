@@ -877,3 +877,14 @@ if (toggleFeaturesBtn && featuresContent) {
     toggleFeaturesBtn.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
   });
 }
+
+// ---------------------------------------------------------
+// 19. Progressive Web App (PWA) Service Worker Registration
+// ---------------------------------------------------------
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(reg => console.log('TaskCraft Pro PWA Service Worker registered:', reg.scope))
+      .catch(err => console.warn('PWA Service Worker registration failed:', err));
+  });
+}

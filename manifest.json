@@ -1,0 +1,24 @@
+{
+  "name": "TaskCraft Pro | Smart Productivity Suite",
+  "short_name": "TaskCraft",
+  "description": "Smart, minimal and fast productivity suite with AI nudges, Google authentication and priority management.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#070709",
+  "theme_color": "#4f46e5",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "assets/images/pk2.jpeg",
+      "sizes": "192x192",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/images/pk2.jpeg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ]
+}
