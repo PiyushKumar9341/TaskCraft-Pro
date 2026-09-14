@@ -466,6 +466,104 @@ if (searchInput) {
   });
 }
 
+// Expandable Search Icon Toggle Logic
+const searchExpandableWrapper = document.getElementById('searchExpandableWrapper');
+const searchToggleBtn          = document.getElementById('searchToggleBtn');
+const searchCloseBtn           = document.getElementById('searchCloseBtn');
+
+if (searchToggleBtn && searchExpandableWrapper && searchInput) {
+  searchToggleBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    searchExpandableWrapper.classList.add('expanded');
+    setTimeout(() => searchInput.focus(), 120);
+  });
+
+  if (searchCloseBtn) {
+    searchCloseBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      searchInput.value = '';
+      searchQuery = '';
+      searchExpandableWrapper.classList.remove('expanded');
+      renderTasks();
+    });
+  }
+
+  document.addEventListener('click', (e) => {
+    if (searchExpandableWrapper && !searchExpandableWrapper.contains(e.target)) {
+      if (!searchInput.value || searchInput.value.trim() === '') {
+        searchExpandableWrapper.classList.remove('expanded');
+      }
+    }
+  });
+
+  searchInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      searchInput.value = '';
+      searchQuery = '';
+      searchExpandableWrapper.classList.remove('expanded');
+      renderTasks();
+    }
+  });
+}
+
+// ---------------------------------------------------------
+// 9.5 Custom Glassmorphic Priority Dropdown Component
+// ---------------------------------------------------------
+const customPriorityWrapper  = document.getElementById('customPriorityWrapper');
+const customPriorityTrigger  = document.getElementById('customPriorityTrigger');
+const customPriorityDropdown = document.getElementById('customPriorityDropdown');
+const customPriorityLabel    = document.getElementById('customPriorityLabel');
+const customOptionItems       = document.querySelectorAll('#customPriorityDropdown .custom-option-item');
+
+if (customPriorityTrigger && customPriorityDropdown) {
+  customPriorityTrigger.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isOpen = customPriorityDropdown.classList.contains('open');
+    if (isOpen) {
+      customPriorityDropdown.classList.remove('open');
+      customPriorityWrapper.classList.remove('active');
+      customPriorityTrigger.setAttribute('aria-expanded', 'false');
+    } else {
+      customPriorityDropdown.classList.add('open');
+      customPriorityWrapper.classList.add('active');
+      customPriorityTrigger.setAttribute('aria-expanded', 'true');
+    }
+  });
+
+  customOptionItems.forEach(item => {
+    item.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const val = item.dataset.value;
+      const dotSpan = item.querySelector('.option-dot');
+      const textSpan = item.querySelector('.option-text');
+      const labelText = `${dotSpan ? dotSpan.textContent : ''} ${textSpan ? textSpan.textContent : ''}`.trim();
+
+      if (prioritySelect) {
+        prioritySelect.value = val;
+      }
+
+      if (customPriorityLabel) {
+        customPriorityLabel.textContent = labelText;
+      }
+
+      customOptionItems.forEach(opt => opt.classList.remove('selected'));
+      item.classList.add('selected');
+
+      customPriorityDropdown.classList.remove('open');
+      customPriorityWrapper.classList.remove('active');
+      customPriorityTrigger.setAttribute('aria-expanded', 'false');
+    });
+  });
+
+  document.addEventListener('click', (e) => {
+    if (customPriorityWrapper && !customPriorityWrapper.contains(e.target)) {
+      customPriorityDropdown.classList.remove('open');
+      customPriorityWrapper.classList.remove('active');
+      customPriorityTrigger.setAttribute('aria-expanded', 'false');
+    }
+  });
+}
+
 // ---------------------------------------------------------
 // 10. Add Task Handler (With Priority Support)
 // ---------------------------------------------------------
@@ -684,8 +782,13 @@ auth.onAuthStateChanged(async (user) => {
 
     tasks = [];
     renderTasks();
-    clearLocalName();
-    updateGreeting('');
+
+    const savedName = getLocalName();
+    if (savedName) {
+      updateGreeting(savedName);
+    } else {
+      updateGreeting('');
+    }
   }
 });
 

@@ -69,30 +69,83 @@
     <!-- Task Input Section with Priority Selection -->
     <div class="input-group">
       <input type="text" id="taskInput" placeholder="Enter your task here..." />
-      <select id="prioritySelect" class="priority-select" title="Set task priority">
+      
+      <!-- Hidden Native Select for Form Synchronization -->
+      <select id="prioritySelect" class="priority-select-hidden" aria-hidden="true" style="display: none;">
         <option value="high">🔴 High</option>
-        <option value="medium" selected>🟡 Med</option>
+        <option value="medium" selected>🟡 Medium</option>
         <option value="low">🔵 Low</option>
       </select>
+
+      <!-- Glassmorphic Custom Priority Select Dropdown -->
+      <div class="custom-select-wrapper" id="customPriorityWrapper">
+        <button type="button" class="custom-select-trigger" id="customPriorityTrigger" aria-haspopup="listbox" aria-expanded="false" title="Set priority">
+          <span class="selected-priority-label" id="customPriorityLabel">🟡 Medium</span>
+          <svg class="dropdown-chevron" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m6 9 6 6 6-6"/>
+          </svg>
+        </button>
+
+        <div class="custom-select-dropdown" id="customPriorityDropdown" role="listbox">
+          <div class="custom-option-item" data-value="high">
+            <div class="option-label-content">
+              <span class="option-dot">🔴</span>
+              <span class="option-text">High</span>
+            </div>
+            <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="custom-option-item selected" data-value="medium">
+            <div class="option-label-content">
+              <span class="option-dot">🟡</span>
+              <span class="option-text">Medium</span>
+            </div>
+            <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="custom-option-item" data-value="low">
+            <div class="option-label-content">
+              <span class="option-dot">🔵</span>
+              <span class="option-text">Low</span>
+            </div>
+            <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </div>
+      </div>
+
       <button id="addTaskBtn">Add Task</button>
     </div>
 
-    <!-- Real-Time Search Bar -->
-    <div class="search-wrapper">
-      <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="11" cy="11" r="8"/>
-        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-      </svg>
-      <input type="text" id="searchInput" placeholder="Search your tasks..." />
-    </div>
-
-    <!-- Filter Buttons & Controls Bar (Always Fixed At Top) -->
+    <!-- Filters Navigation Tabs & Expandable Search Control Bar -->
     <div class="filter-wrapper">
       <div class="filter">
         <button class="filter-btn active" data-filter="all">All</button>
         <button class="filter-btn" data-filter="active">Active</button>
         <button class="filter-btn" data-filter="completed">Completed</button>
       </div>
+
+      <!-- Sleek Expandable Search Icon Toggle -->
+      <div class="expandable-search-wrapper" id="searchExpandableWrapper">
+        <button type="button" class="search-toggle-btn" id="searchToggleBtn" title="Search tasks">
+          <svg class="search-icon-svg" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"/>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+        </button>
+
+        <div class="search-input-expand-box" id="searchInputExpandBox">
+          <svg class="search-inner-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"/>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <input type="text" id="searchInput" placeholder="Search tasks..." />
+          <button type="button" class="search-close-btn" id="searchCloseBtn" title="Close search">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
       <button id="clearAllBtn" title="Delete all tasks">Clear all</button>
     </div>
 
