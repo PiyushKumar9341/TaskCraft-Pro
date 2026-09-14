@@ -19,6 +19,8 @@ const db   = firebase.firestore();
 
 // 2. DOM Element Selectors
 const taskInput            = document.getElementById('taskInput');
+const prioritySelect       = document.getElementById('prioritySelect');
+const searchInput          = document.getElementById('searchInput');
 const addTaskBtn           = document.getElementById('addTaskBtn');
 const taskList             = document.getElementById('taskList');
 const filterButtons        = document.querySelectorAll('.filter-btn');
@@ -43,6 +45,7 @@ const statsBar             = document.getElementById('statsBar');
 // 3. Application State
 // ---------------------------------------------------------
 let currentFilter = 'all';
+let searchQuery   = '';
 let currentUser   = null;
 let tasks         = [];
 
@@ -90,29 +93,73 @@ function clearLocalName() {
   localStorage.removeItem('userName');
 }
 
-function getPopupAiMessage(name) {
+const aiNudgesByTime = {
+  morning: [
+    "Ready to conquer your day?",
+    "Set a great tone for your morning.",
+    "Small steps this morning lead to big wins.",
+    "Fresh start! What’s your #1 target today?",
+    "Fuel your focus early today."
+  ],
+  afternoon: [
+    "Pick a task and keep your momentum going.",
+    "Beat the slump with one quick win.",
+    "Stay sharp! Focus on the next 20 minutes.",
+    "Momentum is built right now.",
+    "One completed task changes your whole day."
+  ],
+  evening: [
+    "Wrap up your day with one solid win.",
+    "Finish strong before you rest.",
+    "Clear your mind by clearing one task.",
+    "You’re one focused task away from feeling great.",
+    "End the day on a high note."
+  ],
+  night: [
+    "A small step tonight makes tomorrow easier.",
+    "Prep for tomorrow by checking off one item.",
+    "Quiet focus late at night works wonders.",
+    "Clear your plate for a peaceful sleep.",
+    "Late night focus session activated."
+  ]
+};
+
+let currentAiNudge = '';
+
+function getRandomNudge() {
+  if (currentAiNudge) return currentAiNudge;
+
   const hour = new Date().getHours();
-  let advice = 'Let’s start with one solid win.';
+  let pool = aiNudgesByTime.evening;
 
   if (hour >= 5 && hour < 12) {
-    advice = 'Ready to conquer your day?';
+    pool = aiNudgesByTime.morning;
   } else if (hour >= 12 && hour < 17) {
-    advice = 'Pick a task and keep your momentum going.';
+    pool = aiNudgesByTime.afternoon;
   } else if (hour >= 17 && hour < 22) {
-    advice = 'Wrap up your day with one solid win.';
+    pool = aiNudgesByTime.evening;
   } else {
-    advice = 'A small step tonight makes tomorrow easier.';
+    pool = aiNudgesByTime.night;
   }
 
+  const idx = Math.floor(Math.random() * pool.length);
+  currentAiNudge = pool[idx];
+  return currentAiNudge;
+}
+
+function getPopupAiMessage(name) {
+  const advice = getRandomNudge();
   const cleanName = name && name.trim() ? name.trim() : '';
-  return cleanName ? `${cleanName}, ${advice}` : `Wrap up your day with one solid win.`;
+  return cleanName 
+    ? `<span class="ai-name-highlight">${cleanName}</span>, ${advice}` 
+    : advice;
 }
 
 function updateModalHeading() {
   const heading = document.getElementById('welcomeModalHeading');
   if (!heading) return;
   const currentName = userNameInput ? userNameInput.value.trim() : '';
-  heading.textContent = getPopupAiMessage(currentName);
+  heading.innerHTML = getPopupAiMessage(currentName);
 }
 
 function updateGreeting(name) {
@@ -132,6 +179,7 @@ function updateGreeting(name) {
 // ---------------------------------------------------------
 function openWelcomeModal() {
   if (!welcomeOverlay) return;
+  currentAiNudge = ''; // Pick a fresh random nudge every time modal opens
   const savedName = getLocalName();
   if (userNameInput && savedName) {
     userNameInput.value = savedName;
@@ -212,15 +260,74 @@ async function loadTasksForUser(uid) {
   }
 }
 
-async function addTaskToUser(uid, text) {
+// ---------------------------------------------------------
+// Confetti Celebration Engine
+// ---------------------------------------------------------
+function triggerConfetti() {
+  const canvas = document.getElementById('confettiCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const particles = [];
+  const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
+
+  for (let i = 0; i < 75; i++) {
+    particles.push({
+      x: window.innerWidth / 2,
+      y: window.innerHeight / 2 + 80,
+      radius: Math.random() * 6 + 3,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      vx: (Math.random() - 0.5) * 16,
+      vy: (Math.random() - 0.85) * 18,
+      opacity: 1,
+      decay: Math.random() * 0.02 + 0.015
+    });
+  }
+
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    let active = false;
+
+    particles.forEach(p => {
+      if (p.opacity > 0) {
+        active = true;
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.45;
+        p.opacity -= p.decay;
+
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, p.opacity);
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+    });
+
+    if (active) {
+      requestAnimationFrame(animate);
+    } else {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+  }
+
+  animate();
+}
+
+async function addTaskToUser(uid, text, priority = 'medium') {
   if (!uid) return;
   const colRef = getTasksCollectionRef(uid);
   const docRef = await colRef.add({
     text,
+    priority,
     completed: false,
     createdAt: firebase.firestore.FieldValue.serverTimestamp()
   });
-  tasks.push({ id: docRef.id, text, completed: false });
+  tasks.push({ id: docRef.id, text, priority, completed: false });
   renderTasks();
 }
 
@@ -230,6 +337,9 @@ async function updateTaskCompletion(uid, taskId, completed) {
   await colRef.doc(taskId).update({ completed });
   const t = tasks.find(t => t.id === taskId);
   if (t) t.completed = completed;
+  if (completed) {
+    triggerConfetti();
+  }
   renderTasks();
 }
 
@@ -253,18 +363,33 @@ async function clearAllTasks(uid) {
 }
 
 // ---------------------------------------------------------
-// 8. Render Task List & Stats Bar
+// 8. Render Task List & Stats Bar (With Priority Badges & Search)
 // ---------------------------------------------------------
+function getPriorityWeight(p) {
+  if (p === 'high') return 3;
+  if (p === 'medium') return 2;
+  if (p === 'low') return 1;
+  return 2;
+}
+
 function renderTasks() {
   if (!taskList) return;
   taskList.innerHTML = '';
 
   let filtered = tasks;
+
   if (currentFilter === 'active') {
     filtered = tasks.filter(t => !t.completed);
   } else if (currentFilter === 'completed') {
     filtered = tasks.filter(t => t.completed);
   }
+
+  if (searchQuery && searchQuery.trim() !== '') {
+    const q = searchQuery.toLowerCase().trim();
+    filtered = filtered.filter(t => t.text && t.text.toLowerCase().includes(q));
+  }
+
+  filtered.sort((a, b) => getPriorityWeight(b.priority) - getPriorityWeight(a.priority));
 
   filtered.forEach(task => {
     const li = document.createElement('li');
@@ -272,6 +397,12 @@ function renderTasks() {
 
     const span = document.createElement('span');
     span.textContent = task.text;
+
+    const p = task.priority || 'medium';
+    const badge = document.createElement('span');
+    badge.className = `priority-badge ${p}`;
+    badge.textContent = p === 'high' ? '🔴 High' : p === 'medium' ? '🟡 Med' : '🔵 Low';
+    span.appendChild(badge);
 
     const btnWrapper = document.createElement('div');
     btnWrapper.className = 'flex space-x-2';
@@ -317,7 +448,7 @@ function renderTasks() {
 }
 
 // ---------------------------------------------------------
-// 9. Filter Buttons Setup
+// 9. Filter Buttons & Search Bar Setup
 // ---------------------------------------------------------
 filterButtons.forEach(btn => {
   btn.addEventListener('click', () => {
@@ -328,12 +459,20 @@ filterButtons.forEach(btn => {
   });
 });
 
+if (searchInput) {
+  searchInput.addEventListener('input', (e) => {
+    searchQuery = e.target.value;
+    renderTasks();
+  });
+}
+
 // ---------------------------------------------------------
-// 10. Add Task Handler
+// 10. Add Task Handler (With Priority Support)
 // ---------------------------------------------------------
 if (addTaskBtn && taskInput) {
   addTaskBtn.addEventListener('click', async () => {
     const text = taskInput.value.trim();
+    const priority = prioritySelect ? prioritySelect.value : 'medium';
     if (!text) {
       showMessage('Please enter a task.', 'error');
       return;
@@ -343,7 +482,7 @@ if (addTaskBtn && taskInput) {
       return;
     }
     try {
-      await addTaskToUser(currentUser.uid, text);
+      await addTaskToUser(currentUser.uid, text, priority);
       taskInput.value = '';
     } catch (err) {
       console.error('Error adding task:', err);
