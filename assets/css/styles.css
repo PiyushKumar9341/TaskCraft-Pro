@@ -567,8 +567,10 @@ body.dark-mode #darkModeToggle .moon-icon {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 10px;
+  gap: 14px;
   width: 100%;
+  margin-top: 26px;
+  margin-bottom: 24px;
 }
 
 .filter {
@@ -670,9 +672,10 @@ body.dark-mode #darkModeToggle .moon-icon {
 
 #taskList li .task-action-group {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   align-items: center;
   flex-shrink: 0;
+  margin-left: auto;
 }
 
 #taskList li button {
