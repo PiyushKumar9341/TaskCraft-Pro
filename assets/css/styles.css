@@ -184,15 +184,22 @@ h1 {
 .top-controls-wrapper {
   position: absolute;
   top: 22px;
+  left: 22px;
   right: 22px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: space-between;
   z-index: 20;
+  pointer-events: none;
 }
 
-/* Circular Theme Toggle Button */
+.top-controls-wrapper button {
+  pointer-events: auto;
+}
+
+/* Circular Theme Toggle Button (Top Right Placement) */
 #darkModeToggle {
+  margin-left: auto;
   width: 42px;
   height: 42px;
   border-radius: 50%;
@@ -235,42 +242,44 @@ body.dark-mode #darkModeToggle .moon-icon {
   display: none;
 }
 
-/* In-App PWA Install Button */
+/* In-App PWA Install Button (Top Left Placement, Download Icon) */
 .pwa-install-btn {
-  background: linear-gradient(135deg, rgba(79, 70, 229, 0.12), rgba(59, 130, 246, 0.12));
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
   color: #4f46e5;
-  border: 1px solid rgba(99, 102, 241, 0.25);
-  padding: 8px 16px;
-  border-radius: 9999px;
-  font-size: 0.82em;
-  font-weight: 700;
+  border: 1px solid rgba(99, 102, 241, 0.2);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  transition: all 0.25s ease;
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.1);
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.15);
   z-index: 10;
   flex-shrink: 0;
 }
 
 .pwa-install-btn:hover {
-  transform: translateY(-2px) scale(1.04);
-  background: linear-gradient(135deg, #4f46e5, #3b82f6);
-  color: #ffffff;
-  border-color: transparent;
-  box-shadow: 0 6px 18px rgba(79, 70, 229, 0.35);
+  background-color: #ffffff;
+  color: var(--primary-accent);
+  transform: translateY(-2px) scale(1.08);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.25);
+  border-color: var(--primary-accent);
 }
 
 body.dark-mode .pwa-install-btn {
-  background: rgba(59, 130, 246, 0.15);
-  color: #93c5fd;
-  border-color: rgba(96, 165, 250, 0.3);
+  background: #181a20;
+  color: #60a5fa;
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
 }
 
 body.dark-mode .pwa-install-btn:hover {
-  background: linear-gradient(135deg, #3b82f6, #60a5fa);
-  color: #070709;
+  background: #20232c;
+  border-color: #60a5fa;
+  color: #93c5fd;
 }
 
 .auth-buttons {
@@ -1356,26 +1365,26 @@ body.dark-mode footer.hero-footer {
   text-align: center;
   margin-top: 24px;
   user-select: none;
-  overflow: hidden;
+  overflow: visible;
   display: flex;
   justify-content: center;
   align-items: center;
-  line-height: 0.82;
-  padding: 0;
+  line-height: 1;
+  padding: 10px 0 16px;
   position: relative;
 }
 
 .footer-trademark-banner span {
   font-family: var(--font-heading);
-  font-size: clamp(3rem, 13.8vw, 17.5rem);
+  font-size: clamp(3.2rem, 14.2vw, 17.5rem);
   font-weight: 900;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.01em;
   white-space: nowrap;
   display: block;
   width: 100%;
   text-align: center;
-  line-height: 0.82;
-  background: linear-gradient(180deg, rgba(37, 99, 235, 0.38) 0%, rgba(37, 99, 235, 0.06) 100%);
+  line-height: 1;
+  background: linear-gradient(180deg, rgba(37, 99, 235, 0.45) 0%, rgba(37, 99, 235, 0.08) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   text-shadow: none;
@@ -1771,6 +1780,7 @@ body.dark-mode .contact-info {
 
   .top-controls-wrapper {
     top: 14px;
+    left: 14px;
     right: 14px;
   }
 
@@ -1783,28 +1793,37 @@ body.dark-mode .contact-info {
   }
 
   #taskList li {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-    padding: 12px 14px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 11px 12px;
   }
 
   #taskList li .task-title-text {
-    width: 100%;
-    margin-right: 0;
-    font-size: 0.92em;
+    flex: 1;
+    min-width: 0;
+    margin-right: 4px;
+    font-size: 0.88em;
   }
 
   #taskList li .task-action-group {
-    width: 100%;
-    justify-content: space-between;
-    border-top: 1px dashed rgba(226, 232, 240, 0.7);
-    padding-top: 8px;
-    margin-top: 2px;
+    width: auto;
+    border-top: none;
+    padding-top: 0;
+    margin-top: 0;
+    gap: 5px;
+    flex-shrink: 0;
   }
 
-  body.dark-mode #taskList li .task-action-group {
-    border-top-color: rgba(255, 255, 255, 0.08);
+  .priority-badge {
+    font-size: 0.65em;
+    padding: 2px 5px;
+  }
+
+  #taskList li button {
+    padding: 5px 8px;
+    font-size: 0.75em;
   }
 
   #welcomeModal {
@@ -1814,6 +1833,15 @@ body.dark-mode .contact-info {
 
   #welcomeModal h2 {
     font-size: 1.18rem;
+  }
+
+  .footer-copyright-credits {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    text-align: center;
   }
 
   .footer-hero-description {
@@ -1831,12 +1859,16 @@ body.dark-mode .contact-info {
   }
 
   .footer-trademark-banner {
-    margin-top: 28px;
+    margin-top: 24px;
+    overflow: visible;
   }
 
   .footer-trademark-banner span {
-    font-size: clamp(3.6rem, 15.5vw, 5.5rem);
+    font-size: clamp(3.2rem, 14vw, 5rem);
     font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: 0;
+    padding: 0 4px;
   }
 }
 
