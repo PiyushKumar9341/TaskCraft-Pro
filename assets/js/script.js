@@ -726,11 +726,14 @@ if (copyEmailBtnFooter && emailAddressFooter) {
     const email = emailAddressFooter.textContent.trim();
     try {
       await navigator.clipboard.writeText(email);
-      const originalText = copyEmailBtnFooter.textContent;
-      copyEmailBtnFooter.textContent = 'Copied! ✓';
+      const originalHtml = copyEmailBtnFooter.innerHTML;
+      copyEmailBtnFooter.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        <span class="copy-btn-text">Copied!</span>
+      `;
       showMessage('Email copied to clipboard.');
       setTimeout(() => {
-        copyEmailBtnFooter.textContent = originalText;
+        copyEmailBtnFooter.innerHTML = originalHtml;
       }, 2000);
     } catch {
       showMessage('Could not copy email.', 'error');

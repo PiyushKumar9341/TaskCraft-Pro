@@ -1294,38 +1294,102 @@ body.dark-mode footer.hero-footer {
   margin-bottom: 22px;
 }
 
-/* Action Pills Row */
-.footer-action-pills {
-  display: flex;
-  justify-content: center;
+/* Unified Glassmorphic Footer Email Card Component */
+.footer-email-card {
+  display: inline-flex;
   align-items: center;
   gap: 12px;
-  flex-wrap: wrap;
-  margin-bottom: 28px;
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1.5px solid var(--border-card);
+  border-radius: 9999px;
+  padding: 5px 6px 5px 18px;
+  margin: 10px 0 28px;
+  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.08);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  max-width: 100%;
 }
 
-.footer-pill-btn {
-  background: var(--bg-card);
-  color: var(--text-primary);
-  border: 1px solid var(--border-card);
-  padding: 10px 22px;
-  border-radius: 9999px;
-  font-size: 0.88em;
-  font-weight: 600;
-  text-decoration: none;
+.footer-email-card:hover {
+  border-color: rgba(99, 102, 241, 0.35);
+  box-shadow: 0 8px 25px rgba(99, 102, 241, 0.15);
+  transform: translateY(-2px);
+}
+
+.footer-email-link {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  cursor: pointer;
-  transition: all 0.25s ease;
-  box-shadow: var(--shadow-sm);
+  color: var(--text-primary);
+  text-decoration: none;
+  font-size: 0.88em;
+  font-weight: 600;
+  transition: color 0.2s ease;
+  min-width: 0;
+  white-space: nowrap;
 }
 
-.footer-pill-btn:hover {
-  transform: translateY(-2px);
-  border-color: #3b82f6;
-  color: #3b82f6;
-  box-shadow: 0 6px 18px rgba(59, 130, 246, 0.25);
+.footer-email-link svg {
+  color: var(--primary-accent);
+  flex-shrink: 0;
+}
+
+.footer-email-link:hover {
+  color: var(--primary-accent);
+}
+
+.footer-email-divider {
+  width: 1px;
+  height: 20px;
+  background: var(--border-card);
+  flex-shrink: 0;
+}
+
+.footer-copy-btn {
+  background: linear-gradient(135deg, #4f46e5, #3b82f6);
+  color: #ffffff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 9999px;
+  font-size: 0.82em;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 3px 12px rgba(79, 70, 229, 0.25);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.footer-copy-btn:hover {
+  background: linear-gradient(135deg, #4338ca, #2563eb);
+  transform: scale(1.04);
+  box-shadow: 0 5px 16px rgba(79, 70, 229, 0.38);
+}
+
+.footer-copy-btn:active {
+  transform: scale(0.96);
+}
+
+body.dark-mode .footer-email-card {
+  background: rgba(24, 26, 32, 0.85);
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+body.dark-mode .footer-email-divider {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+body.dark-mode .footer-email-link {
+  color: #f3f4f6;
+}
+
+body.dark-mode .footer-email-link:hover {
+  color: #60a5fa;
 }
 
 /* Bottom Credits Row */
@@ -1881,14 +1945,19 @@ body.dark-mode .contact-info {
     font-size: 0.9em;
   }
 
-  .footer-action-pills {
-    flex-direction: column;
-    width: 100%;
+  .footer-email-card {
+    padding: 4px 5px 4px 12px;
+    gap: 6px;
+    max-width: 98%;
   }
 
-  .footer-pill-btn {
-    width: 100%;
-    justify-content: center;
+  .footer-email-link {
+    font-size: 0.76em;
+  }
+
+  .footer-copy-btn {
+    padding: 6px 12px;
+    font-size: 0.74em;
   }
 
   .footer-trademark-banner {
