@@ -180,22 +180,19 @@ h1 {
    DARK MODE TOGGLE & AUTH BUTTONS
    ========================================================= */
 
-/* Top Right Controls Wrapper & Buttons */
+/* Top Controls Bar & Buttons */
 .top-controls-wrapper {
   position: absolute;
-  top: 26px;
-  right: 26px;
+  top: 22px;
+  right: 22px;
   display: flex;
   align-items: center;
-  gap: 10px;
-  z-index: 10;
+  gap: 8px;
+  z-index: 20;
 }
 
-/* Circular Theme Toggle Button (Top Right Placement) */
+/* Circular Theme Toggle Button */
 #darkModeToggle {
-  position: relative;
-  top: auto;
-  right: auto;
   width: 42px;
   height: 42px;
   border-radius: 50%;
@@ -210,6 +207,7 @@ h1 {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 4px 14px rgba(99, 102, 241, 0.15);
   z-index: 10;
+  flex-shrink: 0;
 }
 
 #darkModeToggle:hover {
@@ -239,9 +237,6 @@ body.dark-mode #darkModeToggle .moon-icon {
 
 /* In-App PWA Install Button */
 .pwa-install-btn {
-  position: absolute;
-  top: 26px;
-  left: 26px;
   background: linear-gradient(135deg, rgba(79, 70, 229, 0.12), rgba(59, 130, 246, 0.12));
   color: #4f46e5;
   border: 1px solid rgba(99, 102, 241, 0.25);
@@ -256,6 +251,7 @@ body.dark-mode #darkModeToggle .moon-icon {
   transition: all 0.25s ease;
   box-shadow: 0 4px 12px rgba(99, 102, 241, 0.1);
   z-index: 10;
+  flex-shrink: 0;
 }
 
 .pwa-install-btn:hover {
@@ -504,10 +500,38 @@ body.dark-mode .pwa-install-btn:hover {
 }
 
 /* Sleek Expandable Search Icon Button Component */
+/* Sleek Expandable Search Component (Overlay-based for Zero Overflow) */
 .expandable-search-wrapper {
   position: relative;
   display: flex;
   align-items: center;
+}
+
+.expandable-search-wrapper.expanded {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  background: var(--bg-card);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 9999px;
+  animation: searchExpandFade 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes searchExpandFade {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .search-toggle-btn {
@@ -551,8 +575,8 @@ body.dark-mode .pwa-install-btn:hover {
 }
 
 .expandable-search-wrapper.expanded .search-input-expand-box {
-  width: 210px;
-  max-width: 210px;
+  width: 100%;
+  max-width: 100%;
   opacity: 1;
   overflow: visible;
   pointer-events: auto;
@@ -561,26 +585,27 @@ body.dark-mode .pwa-install-btn:hover {
 .search-input-expand-box .search-inner-icon {
   position: absolute;
   left: 14px;
-  color: var(--text-muted);
+  color: var(--primary-accent);
   pointer-events: none;
+  z-index: 2;
 }
 
 #searchInput {
   width: 100%;
-  padding: 8px 36px 8px 36px;
-  border: 1.5px solid var(--border-card);
+  padding: 10px 40px 10px 42px;
+  border: 1.5px solid var(--primary-accent);
   border-radius: 9999px;
-  font-size: 0.86em;
+  font-size: 0.92em;
   outline: none;
   background-color: var(--bg-card-subtle);
   color: var(--text-primary);
   transition: all 0.25s ease;
+  box-shadow: 0 0 0 3.5px var(--primary-glow);
 }
 
 #searchInput:focus {
   border-color: var(--primary-accent);
   background-color: #ffffff;
-  box-shadow: 0 0 0 3px var(--primary-glow);
 }
 
 .search-close-btn {
@@ -593,14 +618,15 @@ body.dark-mode .pwa-install-btn:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 4px;
+  padding: 6px;
   border-radius: 50%;
   transition: all 0.2s ease;
+  z-index: 2;
 }
 
 .search-close-btn:hover {
   color: var(--danger-accent);
-  background: rgba(239, 68, 68, 0.1);
+  background: rgba(239, 68, 68, 0.12);
 }
 
 /* Priority Badges */
@@ -643,6 +669,7 @@ body.dark-mode .pwa-install-btn:hover {
   gap: 12px;
   width: 100%;
   margin: 24px 0;
+  position: relative;
 }
 
 .filter {
@@ -1607,26 +1634,53 @@ body.dark-mode .contact-info {
 
 @media (max-width: 768px) {
   .container {
-    margin: 24px auto 40px;
-    padding: 30px 22px 26px;
+    margin: 16px auto 36px;
+    padding: 34px 20px 24px;
     width: 94%;
     border-radius: 24px;
   }
 
+  .top-controls-wrapper {
+    top: 18px;
+    right: 18px;
+  }
+
   #darkModeToggle {
-    top: 20px;
-    right: 20px;
-    width: 40px;
-    height: 40px;
+    width: 38px;
+    height: 38px;
+  }
+
+  .pwa-install-btn {
+    padding: 6px 12px;
+    font-size: 0.78em;
   }
 
   h1 {
-    font-size: 2em;
+    font-size: 1.95em;
+    margin-top: 4px;
+  }
+
+  .app-subtitle {
+    font-size: 0.72em;
+    padding: 3px 12px;
+  }
+
+  #quote {
+    font-size: 0.9em;
+    margin: 4px 0 16px;
+    padding: 0 8px;
   }
 
   .input-group {
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
+    margin: 18px 0 0;
+  }
+
+  #taskInput {
+    width: 100%;
+    font-size: 16px; /* Prevents auto-zoom on mobile Safari */
+    padding: 13px 18px;
   }
 
   .custom-select-wrapper {
@@ -1636,7 +1690,7 @@ body.dark-mode .contact-info {
   .custom-select-trigger {
     width: 100%;
     justify-content: space-between;
-    padding: 14px 20px;
+    padding: 12px 18px;
   }
 
   .custom-select-dropdown {
@@ -1646,44 +1700,143 @@ body.dark-mode .contact-info {
 
   #addTaskBtn {
     width: 100%;
-    padding: 14px;
+    padding: 13px;
+    font-size: 0.94em;
   }
 
   .auth-buttons {
     flex-direction: column;
     width: 100%;
+    gap: 8px;
   }
 
   #googleLoginBtn,
   #logoutBtn {
     width: 100%;
     justify-content: center;
+    padding: 11px 20px;
   }
 
-  .feature-row {
-    flex-direction: column;
-    align-items: flex-start;
+  .filter-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    width: 100%;
+    margin: 18px 0;
+    position: relative;
   }
 
-  .feature-tag {
-    align-self: flex-start;
-  }
-}
-
-@media (max-width: 480px) {
-  .container {
-    width: 96%;
-    padding: 24px 18px 22px;
-    border-radius: 20px;
-  }
-
-  h1 {
-    font-size: 1.75em;
+  .filter {
+    flex: 1;
+    min-width: 0;
   }
 
   .filter-btn {
+    padding: 7px 10px;
+    font-size: 0.78em;
+  }
+
+  .expandable-search-wrapper {
+    flex-shrink: 0;
+  }
+
+  #clearAllBtn {
     padding: 7px 12px;
-    font-size: 0.82em;
+    font-size: 0.8em;
+    flex-shrink: 0;
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .feature-card {
+    padding: 18px 20px;
+  }
+
+  .footer-trademark-banner span {
+    font-size: clamp(3.8rem, 16vw, 7.5rem);
+    letter-spacing: -0.02em;
+  }
+}
+
+@media (max-width: 520px) {
+  .container {
+    width: 95%;
+    padding: 34px 16px 20px;
+    border-radius: 20px;
+  }
+
+  .top-controls-wrapper {
+    top: 14px;
+    right: 14px;
+  }
+
+  h1 {
+    font-size: 1.7em;
+  }
+
+  .greeting-message {
+    font-size: 1.15em;
+  }
+
+  #taskList li {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 14px;
+  }
+
+  #taskList li .task-title-text {
+    width: 100%;
+    margin-right: 0;
+    font-size: 0.92em;
+  }
+
+  #taskList li .task-action-group {
+    width: 100%;
+    justify-content: space-between;
+    border-top: 1px dashed rgba(226, 232, 240, 0.7);
+    padding-top: 8px;
+    margin-top: 2px;
+  }
+
+  body.dark-mode #taskList li .task-action-group {
+    border-top-color: rgba(255, 255, 255, 0.08);
+  }
+
+  #welcomeModal {
+    padding: 24px 18px 22px;
+    border-radius: 22px;
+  }
+
+  #welcomeModal h2 {
+    font-size: 1.18rem;
+  }
+
+  .footer-hero-description {
+    font-size: 0.9em;
+  }
+
+  .footer-action-pills {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .footer-pill-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .footer-trademark-banner {
+    margin-top: 28px;
+  }
+
+  .footer-trademark-banner span {
+    font-size: clamp(3.6rem, 15.5vw, 5.5rem);
+    font-weight: 900;
   }
 }
 

@@ -36,15 +36,18 @@
 </head>
 <body>
   <div class="container">
-    <!-- App Title & Subtitle -->
-    <h1>TaskCraft Pro</h1>
-    <p class="app-subtitle">Smart Productivity Suite</p>
-
-    <!-- Motivational Quote -->
-    <div id="quote"></div>
-
-    <!-- Top Right Controls Wrapper (Dark Mode Toggle) -->
+    <!-- Top Controls Bar (PWA Install & Dark Mode Toggle) -->
     <div class="top-controls-wrapper">
+      <!-- In-App PWA Install Button (Appears automatically when installable) -->
+      <button id="pwaInstallBtn" class="pwa-install-btn" style="display:none;" title="Install TaskCraft App">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        <span>Install App 📲</span>
+      </button>
+
       <!-- Dark Mode Toggle Circular Button -->
       <button id="darkModeToggle" aria-label="Toggle dark mode" title="Toggle theme">
         <svg class="theme-icon moon-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -64,15 +67,12 @@
       </button>
     </div>
 
-    <!-- In-App PWA Install Button (Appears automatically when installable) -->
-    <button id="pwaInstallBtn" class="pwa-install-btn" style="display:none;" title="Install TaskCraft App">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-        <polyline points="7 10 12 15 17 10"/>
-        <line x1="12" y1="15" x2="12" y2="3"/>
-      </svg>
-      <span>Install App 📲</span>
-    </button>
+    <!-- App Title & Subtitle -->
+    <h1>TaskCraft Pro</h1>
+    <p class="app-subtitle">Smart Productivity Suite</p>
+
+    <!-- Motivational Quote -->
+    <div id="quote"></div>
 
     <!-- Personalized Greeting -->
     <p id="personalizedGreeting" class="greeting-message" style="display:none;">
