@@ -2,7 +2,7 @@
    TASKCRAFT PRO | SERVICE WORKER FOR PWA OFFLINE CAPABILITY
    ========================================================= */
 
-const CACHE_NAME = 'taskcraft-pro-v9';
+const CACHE_NAME = 'taskcraft-pro-v10';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
